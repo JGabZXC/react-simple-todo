@@ -1,4 +1,4 @@
-export default function SideBar({ projects, onAdd }) {
+export default function SideBar({ projects, onAdd, selectedProjectId }) {
   return (
     <aside className="min-w-[25rem] bg-stone-800 h-screen p-4">
       <div className="flex justify-between items-center">
@@ -14,16 +14,19 @@ export default function SideBar({ projects, onAdd }) {
       </div>
 
       <ul>
-        {projects.map((project) => (
-          <li key={project.id}>
-            <button
-              onClick={() => onAdd(project.id)}
-              className="w-full text-left px-2 py-1 rounded-sm my-1 text-stone-200 hover:bg-stone-800 focus:outline-none focus:bg-stone-800 cursor-pointer hover:outline-1 hover:outline-stone-600"
-            >
-              {project.title}
-            </button>
-          </li>
-        ))}
+        {projects.map((project) => {
+          let cssClass =
+            "w-full text-left px-2 py-1 rounded-sm my-1 text-stone-200 focus:outline-none cursor-pointer";
+          if (project.id === selectedProjectId) cssClass += " bg-stone-700";
+          else cssClass += " hover:outline-1 hover:outline-stone-600";
+          return (
+            <li key={project.id}>
+              <button onClick={() => onAdd(project.id)} className={cssClass}>
+                {project.title}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </aside>
   );

@@ -32,6 +32,14 @@ function App() {
     });
   }
 
+  function handleDeleteProject(id) {
+    setProjectsState((prevState) => ({
+      ...prevState,
+      projects: prevState.projects.filter((project) => project.id !== id),
+      id: null,
+    }));
+  }
+
   function handleCancelProjectCreation(id) {
     setProjectsState((prevState) => ({
       ...prevState,
@@ -54,6 +62,7 @@ function App() {
     <ProjectSelected
       project={selectedProject}
       onCancel={handleCancelProjectCreation}
+      onDelete={handleDeleteProject}
     />
   );
 
@@ -74,6 +83,7 @@ function App() {
         <SideBar
           projects={projectsState.projects}
           onAdd={handleProjectSelection}
+          selectedProjectId={selectedProject?.id}
         />
         {content}
       </main>
