@@ -1,93 +1,28 @@
-import { useState } from "react";
+import { useContext } from "react";
+import { ProjectsStateContext } from "./store/project-state-context";
 
 import SideBar from "./components/SideBar";
 import NoProjectSelected from "./components/NoProjectSelected";
 import ProjectSelected from "./components/ProjectSelected";
 import CreateProject from "./components/CreateProject";
 
-let id = 0;
-
 function App() {
-  const [projectsState, setProjectsState] = useState({
-    id: null,
-    projects: [],
-    tasks: [],
-  });
+  const { id } = useContext(ProjectsStateContext);
+  // const selectedProject = projects.find((project) => project.id === id);
 
-  function handleCreateProject(projectData) {
-    setProjectsState((prevState) => {
-      const newId = ++id;
-      const newProject = {
-        id: newId,
-        title: projectData.title,
-        description: projectData.description,
-        dueDate: projectData.dueDate,
-      };
+  let content = <ProjectSelected />;
 
-      return {
-        ...prevState,
-        id: newId,
-        projects: [...prevState.projects, newProject],
-      };
-    });
-  }
-
-  function handleDeleteProject(id) {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      projects: prevState.projects.filter((project) => project.id !== id),
-      id: null,
-    }));
-  }
-
-  function handleCancelProjectCreation(id) {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      id: id,
-    }));
-  }
-
-  function handleProjectSelection(id) {
-    setProjectsState((prevState) => ({
-      ...prevState,
-      id: id,
-    }));
-  }
-
-  const selectedProject = projectsState.projects.find(
-    (project) => project.id === projectsState.id
-  );
-
-  let content = (
-    <ProjectSelected
-      project={selectedProject}
-      onCancel={handleCancelProjectCreation}
-      onDelete={handleDeleteProject}
-    />
-  );
-
-  if (projectsState.id === null) {
-    content = <NoProjectSelected onAdd={handleProjectSelection} />;
-  } else if (projectsState.id === "creating") {
-    content = (
-      <CreateProject
-        onCancel={handleCancelProjectCreation}
-        onSave={handleCreateProject}
-      />
-    );
+  if (id === null) {
+    content = <NoProjectSelected />;
+  } else if (id === "creating") {
+    content = <CreateProject />;
   }
 
   return (
-    <>
-      <main className="flex">
-        <SideBar
-          projects={projectsState.projects}
-          onAdd={handleProjectSelection}
-          selectedProjectId={selectedProject?.id}
-        />
-        {content}
-      </main>
-    </>
+    <main className="flex">
+      <SideBar />
+      {content}
+    </main>
   );
 }
 

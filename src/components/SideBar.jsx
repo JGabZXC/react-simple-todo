@@ -1,4 +1,10 @@
-export default function SideBar({ projects, onAdd, selectedProjectId }) {
+import { useContext } from "react";
+import { ProjectsStateContext } from "../store/project-state-context";
+
+export default function SideBar() {
+  const { projects, handleAddProject, handleProjectSelection, id } =
+    useContext(ProjectsStateContext);
+  console.log(projects, id);
   return (
     <aside className="min-w-[25rem] bg-stone-800 h-screen p-4">
       <div className="flex justify-between items-center">
@@ -6,7 +12,7 @@ export default function SideBar({ projects, onAdd, selectedProjectId }) {
           Project List
         </h2>
         <button
-          onClick={() => onAdd("creating")}
+          onClick={handleAddProject}
           className="bg-stone-700 text-stone-200 py-2 px-4 rounded mb-4 hover:bg-stone-600 transition duration-300 ease-in-out cursor-pointer"
         >
           Add Project
@@ -17,11 +23,14 @@ export default function SideBar({ projects, onAdd, selectedProjectId }) {
         {projects.map((project) => {
           let cssClass =
             "w-full text-left px-2 py-1 rounded-sm my-1 text-stone-200 focus:outline-none cursor-pointer";
-          if (project.id === selectedProjectId) cssClass += " bg-stone-700";
+          if (project.id === id) cssClass += " bg-stone-700";
           else cssClass += " hover:outline-1 hover:outline-stone-600";
           return (
             <li key={project.id}>
-              <button onClick={() => onAdd(project.id)} className={cssClass}>
+              <button
+                onClick={() => handleProjectSelection(project.id)}
+                className={cssClass}
+              >
                 {project.title}
               </button>
             </li>

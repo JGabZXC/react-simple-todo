@@ -1,10 +1,13 @@
-import { useRef } from "react";
+import { useRef, useContext } from "react";
 import Input from "./Input";
+import { ProjectsStateContext } from "../store/project-state-context";
 
-export default function CreateProject({ onCancel, onSave }) {
+export default function CreateProject() {
   const titleRef = useRef();
   const descriptionRef = useRef();
   const dueDateRef = useRef();
+  const { handleCancelProject, handleCreateProject } =
+    useContext(ProjectsStateContext);
 
   function handleSave() {
     const title = titleRef.current.value;
@@ -15,7 +18,7 @@ export default function CreateProject({ onCancel, onSave }) {
       return;
     }
 
-    onSave({
+    handleCreateProject({
       title,
       description,
       dueDate,
@@ -26,7 +29,7 @@ export default function CreateProject({ onCancel, onSave }) {
       <menu className="flex items-center justify-end gap-4 my-4 w-100">
         <li>
           <button
-            onClick={() => onCancel(null)}
+            onClick={handleCancelProject}
             className="py-2 px-4 text-stone-200 hover:text-stone-600 cursor-pointer"
           >
             Cancel
