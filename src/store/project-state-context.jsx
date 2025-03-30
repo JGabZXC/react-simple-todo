@@ -11,6 +11,9 @@ export const ProjectsStateContext = createContext({
   handleCancelProject: () => {},
   handleProjectSelection: () => {},
   handleAddProject: () => {},
+  handleAddTask: () => {},
+  handleDeleteTask: () => {},
+  handleUpdateTask: () => {},
 });
 
 export default function ProjectsStateProvider({ children }) {
@@ -48,6 +51,7 @@ export default function ProjectsStateProvider({ children }) {
     setProjectsState((prevState) => ({
       ...prevState,
       projects: prevState.projects.filter((project) => project.id !== id),
+      tasks: prevState.tasks.filter((task) => task.parentId !== id),
       id: null,
     }));
   }
@@ -60,11 +64,44 @@ export default function ProjectsStateProvider({ children }) {
   }
 
   function handleProjectSelection(id) {
-    console.log("clicked", id);
     setProjectsState((prevState) => ({
       ...prevState,
       id: id,
     }));
+  }
+
+  function handleAddTask(taskData) {
+    setProjectsState((prevState) => {
+      const newId = ++idCustom;
+      const newTask = {
+        id: newId,
+        name: taskData.name,
+        parentId: taskData.parentId,
+      };
+
+      return {
+        ...prevState,
+        tasks: [...prevState.tasks, newTask],
+      };
+    });
+  }
+
+  function handleDeleteTask(id) {
+    setProjectsState((prevState) => ({
+      ...prevState,
+      tasks: prevState.tasks.filter((task) => task.id !== id),
+    }));
+  }
+
+  function handleUpdateTask(id, taskData) {
+    setProjectsState((prevState) => {
+      const task = prevState.tasks.findIndex((task) => task.id === id);
+      prevState.tasks[task].name = taskData;
+
+      return {
+        ...prevState,
+      };
+    });
   }
 
   const projectsStateValue = {
@@ -76,6 +113,9 @@ export default function ProjectsStateProvider({ children }) {
     handleCancelProject,
     handleProjectSelection,
     handleAddProject,
+    handleAddTask,
+    handleDeleteTask,
+    handleUpdateTask,
   };
 
   return (

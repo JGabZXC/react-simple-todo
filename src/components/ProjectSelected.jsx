@@ -1,12 +1,49 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { ProjectsStateContext } from "../store/project-state-context";
 
 export default function ProjectSelected() {
-  const { id, projects, handleCancelProject, handleDeleteProject } =
-    useContext(ProjectsStateContext);
+  const {
+    id,
+    projects,
+    tasks,
+    handleCancelProject,
+    handleDeleteProject,
+    handleAddTask,
+    handleDeleteTask,
+    handleUpdateTask,
+  } = useContext(ProjectsStateContext);
+  const [newTask, setNewTask] = useState("");
+  const [isEditing, setIsEditing] = useState(null);
+  const [taskValue, setTaskValue] = useState("");
+
   const project = projects.find((proj) => proj.id === id);
-  // const project = projects.find((proj) => proj.id === projects.id);
-  // console.log(project);
+  const task = tasks.filter((proj) => proj.parentId === id);
+
+  function startEdit(task) {
+    setIsEditing(task.id);
+    setTaskValue(task.name);
+  }
+
+  function saveEdit(taskId) {
+    handleUpdateTask(taskId, taskValue);
+    setIsEditing(null);
+    setTaskValue("");
+  }
+
+  function handleChange(e) {
+    setNewTask(e.target.value);
+  }
+
+  function handleTask() {
+    const taskName = newTask;
+    if (taskName.trim() === "") return;
+
+    handleAddTask({
+      name: taskName,
+      parentId: id,
+    });
+    setNewTask("");
+  }
 
   return (
     <section className="flex-1 h-screen flex flex-col justify-center items-center bg-stone-900 text-stone-200">
@@ -38,16 +75,65 @@ export default function ProjectSelected() {
         <div className="border-t-2 border-stone-200">
           <div className="flex items-center justify-between gap-4">
             <input
+              onChange={handleChange}
+              value={newTask}
               className="w-1/2 p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600"
               type="text"
             />
-            <button className="my-4 bg-stone-700 text-stone-200 py-2 px-4 rounded hover:bg-stone-600 transition duration-300 ease-in-out cursor-pointer">
+            <button
+              onClick={handleTask}
+              className="my-4 bg-stone-700 text-stone-200 py-2 px-4 rounded hover:bg-stone-600 transition duration-300 ease-in-out cursor-pointer"
+            >
               Add Task
             </button>
           </div>
-          TASK LIST
+          <ul className=" h-80 overflow-y-auto">
+            {task.length === 0 && <p>No task</p>}
+            {task &&
+              task.map((task) => {
+                return (
+                  <li
+                    key={task.id}
+                    className="text-left px-2 py-1 rounded-sm my-1 text-stone-200 focus:outline-none"
+                  >
+                    <div className="flex justify-between gap-4">
+                      {isEditing === task.id ? (
+                        <input
+                          type="text"
+                          className="p-1 border-b-2 rounded-sm border-stone-300 bg-stone-200 text-stone-600 focus:outline-none focus:border-stone-600"
+                          value={taskValue}
+                          onChange={(e) => setTaskValue(e.target.value)}
+                        />
+                      ) : (
+                        <p className="text-stone-200 break-all">{task.name}</p>
+                      )}
+                      <div className="flex gap-2">
+                        {isEditing === task.id ? (
+                          <button onClick={() => saveEdit(task.id)}>
+                            Save
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              startEdit({ id: task.id, name: task.name })
+                            }
+                          >
+                            Edit
+                          </button>
+                        )}
+                        <button onClick={() => handleDeleteTask(task.id)}>
+                          Clear
+                        </button>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+          </ul>
         </div>
       </div>
     </section>
   );
 }
+
+// outline-1 outline-stone-600 rounded-sm p-2 bg-stone-800

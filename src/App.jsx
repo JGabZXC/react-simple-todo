@@ -8,7 +8,6 @@ import CreateProject from "./components/CreateProject";
 
 function App() {
   const { id } = useContext(ProjectsStateContext);
-  // const selectedProject = projects.find((project) => project.id === id);
 
   let content = <ProjectSelected />;
 

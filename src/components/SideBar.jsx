@@ -4,7 +4,7 @@ import { ProjectsStateContext } from "../store/project-state-context";
 export default function SideBar() {
   const { projects, handleAddProject, handleProjectSelection, id } =
     useContext(ProjectsStateContext);
-  console.log(projects, id);
+
   return (
     <aside className="min-w-[25rem] bg-stone-800 h-screen p-4">
       <div className="flex justify-between items-center">
